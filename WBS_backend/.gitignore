@@ -1,0 +1,74 @@
+# .NET Build Output
+bin/
+obj/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+*.sln.cache
+
+# User-specific files
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+
+# NuGet Packages
+*.nupkg
+packages/
+!packages/repositories.config
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Secrets & Local Config (KHÔNG commit lên Git)
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+*.secrets.json
+
+# Logs
+logs/
+*.log
+
+# Rider
+.idea/
+
+# Mac OS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+
+# Entity Framework Migrations (nếu không muốn commit history migration)
+Migrations/*_InitialCreate.cs  # Chỉ bỏ nếu bạn dùng DB-first hoặc không muốn commit migration
+# Thường thì NÊN commit migration để team đồng bộ DB
+
+# Test results
+TestResults/
+*.trx
+
+# Coverage
+*.coverage
+*.coveragexml
