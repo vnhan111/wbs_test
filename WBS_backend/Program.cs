@@ -95,6 +95,7 @@ builder.Services.AddSwaggerGen(c =>
 // =========================
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 // builder.Services.AddScoped<IMemberService, MemberService>();
 
 // =========================
