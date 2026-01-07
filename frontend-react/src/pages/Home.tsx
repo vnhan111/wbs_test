@@ -7,6 +7,7 @@ import { ProjectService } from "../service/projectService";
 const Home: React.FC = () => {
     const { projects, isLoading } = useSelector((state: RootState) => state.project);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const  [formData, setFormData] = useState({
         projectCode: "",
         projectName: "",
@@ -16,6 +17,14 @@ const Home: React.FC = () => {
         authorFullName: ""
     })
 
+    const [formEditData, setFormEditData] = useState({
+        projectCode: "",
+        projectName: "",
+        projectStatusName: "Open",
+        expectedStartDate: "",
+        expectedEndDate: "",
+        authorFullName: ""
+    })
     useEffect(() => {
         ProjectService.getAllProjects();
     }, []);
@@ -23,6 +32,7 @@ const Home: React.FC = () => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        setFormEditData(prev => ({ ...prev, [name]: value}));
     };
 
     const handleSubmit = async () => {
@@ -37,6 +47,19 @@ const Home: React.FC = () => {
             authorFullName: ""
         })
     };
+
+    useEffect(() => {
+        const fetchProject = async () => {
+            
+        };
+        fetchProject();
+    })
+
+    const handleEditProject = async () => {
+        console.log("New project data", formData);
+        setIsModalOpen(false);
+    }
+    
 
     return (
         <div className="bg-gray-100 dark:bg-gray-900 w-[123%] ml-[-132px]">
@@ -131,7 +154,9 @@ const Home: React.FC = () => {
                                                     </svg>
                                                 </button>
 
-                                                <button className="p-1 rounded-md bg-green-500 hover:bg-green-600 text-white transition-colors" title="Edit">
+                                                <button 
+                                                    onClick={() => setIsEditModalOpen(true)}
+                                                    className="p-1 rounded-md bg-green-500 hover:bg-green-600 text-white transition-colors" title="Edit">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className='h-3 w-3'>
                                                         <path d="M505 122.9L517.1 135C526.5 144.4 526.5 159.6 517.1 168.9L488 198.1L441.9 152L471 122.9C480.4 113.5 495.6 113.5 504.9 122.9zM273.8 320.2L408 185.9L454.1 232L319.8 366.2C316.9 369.1 313.3 371.2 309.4 372.3L250.9 389L267.6 330.5C268.7 326.6 270.8 323 273.7 320.1zM437.1 89L239.8 286.2C231.1 294.9 224.8 305.6 221.5 317.3L192.9 417.3C190.5 425.7 192.8 434.7 199 440.9C205.2 447.1 214.2 449.4 222.6 447L322.6 418.4C334.4 415 345.1 408.7 353.7 400.1L551 202.9C579.1 174.8 579.1 129.2 551 101.1L538.9 89C510.8 60.9 465.2 60.9 437.1 89zM152 128C103.4 128 64 167.4 64 216L64 488C64 536.6 103.4 576 152 576L424 576C472.6 576 512 536.6 512 488L512 376C512 362.7 501.3 352 488 352C474.7 352 464 362.7 464 376L464 488C464 510.1 446.1 528 424 528L152 528C129.9 528 112 510.1 112 488L112 216C112 193.9 129.9 176 152 176L264 176C277.3 176 288 165.3 288 152C288 138.7 277.3 128 264 128L152 128z" fill="currentColor" />
                                                     </svg>
@@ -324,6 +349,133 @@ const Home: React.FC = () => {
                                     className="px-6 py-3 bg-green-400 hover:bg-green-500 text-white font-medium rounded-xl transition shadow-md"
                                 >
                                     Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {isEditModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+                        onClick={() => setIsEditModalOpen(false)}>
+                    </div>
+                    <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-8 animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                Edit Project
+                            </h2>
+                            <button
+                                onClick={() => setIsEditModalOpen(false)}
+                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                            >
+                                <X className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleEditProject} className="space-y-2">
+                            <div className="grid grid-col-1 gap-2">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Project Code <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="projectCode"
+                                        value={formEditData.projectCode}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        placeholder="Enter project code"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Project Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="projectName"
+                                        value={formEditData.projectName}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        placeholder="Enter project name"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Status
+                                    </label>
+                                    <select
+                                        name="projectStatusName"
+                                        value={formEditData.projectStatusName}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    >
+                                        <option value="Open">Open</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Done">Done</option>
+                                        <option value="Closed">Closed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Expected Start Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="expectedStartDate"
+                                        value={formEditData.expectedStartDate}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Expected End Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="expectedEndDate"
+                                        value={formEditData.expectedEndDate}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Project Leader
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="authorFullName"
+                                        value={formEditData.authorFullName}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        placeholder="Enter name"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-4 pt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditModalOpen(false)}
+                                    className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-6 py-3 bg-green-400 hover:bg-green-500 text-white font-medium rounded-xl transition shadow-md"
+                                >
+                                    Update
                                 </button>
                             </div>
                         </form>
