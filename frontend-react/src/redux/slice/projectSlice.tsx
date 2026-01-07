@@ -49,6 +49,24 @@ const projectSlice = createSlice({
             state.isLoading = false;
             state.error = null;
         },
+        addProject: (state, action: PayloadAction<Project>) => {
+            state.projects.push(action.payload);
+            state.isLoading = false;
+            state.error = null;
+        },
+        updateProject: (state, action: PayloadAction<Project>) => {
+            const index = state.projects.findIndex(project => project.projectId === action.payload.projectId);
+            if(index !== -1) {
+                state.projects[index] = action.payload;
+            }
+            state.isLoading = false;
+            state.error = null;
+        },
+        removeProject: (state, action: PayloadAction<number>) => {
+            state.projects = state.projects.filter(project => project.projectId !== action.payload)
+            state.isLoading = false;
+            state.error = null;
+        },
         setError: (state, action: PayloadAction<string>) => {
             state.error = action.payload;
             state.isLoading = false;
@@ -69,6 +87,9 @@ export const {
     setLoading,
     setProjects,
     setSelectedProject,
+    addProject,
+    updateProject,
+    removeProject,
     setError,
     clearError,
     clearSelectedProject,

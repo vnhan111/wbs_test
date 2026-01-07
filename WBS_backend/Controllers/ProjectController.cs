@@ -82,7 +82,7 @@ namespace WBS_backend.Controllers
             }
         }
 
-        [HttpDelete("delete{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteProjectById(int id)
         {
             try
