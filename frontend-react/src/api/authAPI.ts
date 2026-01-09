@@ -10,7 +10,7 @@ export interface RegisterRequest {
     passWord: string;
 }
 export interface UserResponse {
-    memberId :string;
+    memberId: string;
     memberFullName: string;
     email: string;
     loginName: string;
@@ -23,6 +23,10 @@ export interface LoginResponse {
     message: string;
     success: boolean;
     user: UserResponse;
+}
+export interface RequestPasswordRequest {
+    password: string;
+    confirmPassword: string;
 }
 
 export const loginAPI = async (body: LoginRequest) => {
@@ -51,8 +55,45 @@ export const verifyEmailAPI = async (email: string, code: string) => {
     try {
         const url = `http://localhost:5075/api/auth/verify-email`;
         const response = await axios.get<UserResponse>(url, {
-            params:{email, code}
+            params: { email, code }
         });
+        return response.data;
+    } catch (error) {
+        console.error("Error verifying email:", error);
+        throw error;
+    }
+}
+
+export const forgotPasswordAPI = async (email: string) => {
+    try {
+        const url = `http://localhost:5075/api/auth/forgot-password`;
+        const response = await axios.post(url, email,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error verifying email:", error);
+        throw error;
+    }
+}
+
+export const resetPasswordAPI = async (email: string, resetCode: string, resetPassword: RequestPasswordRequest) => {
+    try {
+        const url = `http://localhost:5075/api/auth/reset-password`;
+        const response = await axios.post(url,
+            {
+                password: resetPassword.password,
+                confirmPassword: resetPassword.confirmPassword
+            }, {
+            params: {
+                email, resetCode
+            }
+        }
+        );
         return response.data;
     } catch (error) {
         console.error("Error verifying email:", error);

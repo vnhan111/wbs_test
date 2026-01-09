@@ -1,7 +1,22 @@
 import { verifyEmailAPI } from './../api/authAPI';
 import Store from "../store/Store";
-import { loginAPI, registerAPI, type LoginRequest, type RegisterRequest } from "../api/authAPI";
-import { successLogin, failLogin, successRegister, failRegister, logout, successVerify, failVerify } from "../redux/slice/authSlice";
+import { 
+  loginAPI, 
+  registerAPI, 
+  forgotPasswordAPI,   // ← Thêm import
+  resetPasswordAPI,    // ← Thêm import
+  type LoginRequest, 
+  type RegisterRequest 
+} from "../api/authAPI";
+import { 
+  successLogin, 
+  failLogin, 
+  successRegister, 
+  failRegister, 
+  logout, 
+  successVerify, 
+  failVerify 
+} from "../redux/slice/authSlice";
 
 const { dispatch } = Store;
 
@@ -44,9 +59,7 @@ export class AuthService {
       if (response) {
         console.log("AuthService: Register successful");
         dispatch(
-          successRegister(
-            response
-          )
+          successRegister(response)
         );
         return { success: true, data: response };
       } else {
@@ -54,9 +67,8 @@ export class AuthService {
         dispatch(failRegister("Register failed"));
         return { success: false };
       }
-    } catch (err: unknown) { // ← Thay any thành unknown
+    } catch (err: unknown) {
       console.error("AuthService: Register error:", err);
-      // An toàn type: giả sử err có thể là AxiosError hoặc Error
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -77,7 +89,7 @@ export class AuthService {
       return { success: true, data: res };
     } catch (err: unknown) {
       console.error("AuthService: Verification error:", err);
-      const errorMessage = err instanceof Error? err.message : "Verification failed";
+      const errorMessage = err instanceof Error ? err.message : "Verification failed";
       dispatch(failVerify(errorMessage));
       return { success: false, error: errorMessage };
     }
@@ -95,6 +107,44 @@ export class AuthService {
         err instanceof Error
           ? err.message
           : "Logout failed";
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  static async forgotPassword(email: string) {
+    try {
+      console.log("AuthService: Start forgot password");
+      const response = await forgotPasswordAPI(email);
+      
+      console.log("AuthService: Forgot password request successful");
+      return { success: true, data: response };
+    } catch (err: unknown) {
+      console.error("AuthService: Forgot password error:", err);
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Gửi yêu cầu đặt lại mật khẩu thất bại";
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  static async resetPassword(email: string, resetCode: string, newPassword: string, confirmPassword: string) {
+    try {
+      console.log("AuthService: Start reset password");
+      
+      const response = await resetPasswordAPI(email, resetCode, {
+        password: newPassword,
+        confirmPassword: confirmPassword
+      });
+
+      console.log("AuthService: Reset password successful");
+      return { success: true, data: response };
+    } catch (err: unknown) {
+      console.error("AuthService: Reset password error:", err);
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Đặt lại mật khẩu thất bại";
       return { success: false, error: errorMessage };
     }
   }

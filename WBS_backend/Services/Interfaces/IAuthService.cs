@@ -8,4 +8,6 @@ public interface IAuthService
     Task<AuthResponseDto> LoginAsync(LoginRequest loginRequest);
     Task<UserResponse> VerifyEmailAsync(string email, string code);
     Task SendEmailAsync(string toEmail, string subject, string body);
+    Task ForgotPassword(string email);
+    Task<bool> ResetPassword(string email, string resetCode, string newPassword, string confirmPassword);
 }

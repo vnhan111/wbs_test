@@ -52,7 +52,7 @@ namespace WBS_backend.Controllers
             try
             {
                 var result = await _authService.VerifyEmailAsync(email, code);
-                 return Ok(new {Result = result});
+                return Ok(new { Result = result });
             }
             catch (InvalidOperationException ex)
             {
@@ -61,7 +61,35 @@ namespace WBS_backend.Controllers
             catch (Exception)
             {
                 return StatusCode(500, "Lỗi hệ thống");
-            }          
+            }
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
+        {
+            try
+            {
+                await _authService.ForgotPassword(email);
+                return Ok(new { message = "Gửi link đổi mật khẩu thành công trong email" });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Có lỗi xảy ra khi xử lý yêu cầu. Vui lòng thử lại sau.");
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromQuery] string email, [FromQuery] string resetCode, [FromBody] ResetPasswordRequest resetPassword)
+        {
+            try
+            {
+                await _authService.ResetPassword(email, resetCode, resetPassword.Password, resetPassword.ConfirmPassword);
+                return Ok(new { success = true, message = "Đổi mật khẩu thành công" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
         }
     }
 }
