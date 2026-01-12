@@ -20,6 +20,7 @@ namespace WBS_backend.Services
         public async Task<List<ProjectResponseDto>> GetAllProjectAsync()
         {
             return await _context.Projects
+                .Include(p => p.ProjectStatus)
                 .Select(p => new ProjectResponseDto
                 {
                     ProjectId = p.ProjectId,
@@ -34,7 +35,8 @@ namespace WBS_backend.Services
                     SpentTime = p.SpentTime,
                     ProjectDeleteStatus = p.ProjectDeleteStatus,
                     MemberAuthorId = p.MemberAuthorId,
-                    ProjectStatusId = p.ProjectStatusId
+                    ProjectStatusId = p.ProjectStatusId,
+                    ProjectStatusName = p.ProjectStatus != null ? p.ProjectStatus.StatusName: "chưa xác định"
                 })
                 .OrderByDescending(p => p.ProjectId)
                 .ToListAsync();
