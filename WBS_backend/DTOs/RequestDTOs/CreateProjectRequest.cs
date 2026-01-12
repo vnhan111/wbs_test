@@ -10,5 +10,6 @@ namespace WBS_backend.DTOs.RequestDTOs
         public DateTime? ExpectedStartDate {get; set;}
         public DateTime? ExpectedEndDate {get; set;}
         public int MemberAuthorId {get; set;}
+        public int ProjectLeadId {get; set;}
     }
 }

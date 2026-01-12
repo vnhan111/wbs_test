@@ -10,4 +10,10 @@ namespace WBS_backend.DTOs.Response
         public int? RoleId { get; set; }
         public bool IsActive { get; set; }
     }
+
+    public class MemberListResponse
+    {
+        public int MemberId {get; set;}
+        public string MemberFullName {get; set;} = string.Empty;
+    }
 }

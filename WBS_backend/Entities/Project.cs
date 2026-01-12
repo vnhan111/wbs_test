@@ -56,5 +56,10 @@ namespace WBS_backend.Entities
         public int? ProjectStatusId {get; set;}
         [ForeignKey("ProjectStatusId")]
         public virtual ProjectStatus? ProjectStatus { get; set; }
+
+        [Column("project_LeadId")]
+        public int? ProjectLeadId {get; set;}
+        [ForeignKey("ProjectLeadId")]
+        public virtual Member? Member {get; set; }
     }
 }

@@ -22,5 +22,7 @@ namespace WBS_backend.DTOs
         public string? AuthorFullName { get; set; }
         public int? ProjectStatusId {get; set;}
         public string? ProjectStatusName {get; set;}
+        public int? ProjectLeadId {get; set;}
+        public string? ProjectLeadName {get; set;}
     }
 }

@@ -17,5 +17,6 @@ namespace WBS_backend.DTOs.RequestDTOs
         public double? EstimateTime {get; set;}
         public double? SpentTime {get; set;}
         public int? ProjectStatusId {get; set;}
+        public int? ProjectLeadId {get; set;}
     }
 }

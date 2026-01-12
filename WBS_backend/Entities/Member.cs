@@ -90,5 +90,7 @@ namespace WBS_backend.Entities
 
         [Column("out_date")]
         public DateTime? OutDate { get; set; }
+
+        public virtual ICollection<Project> Projects {get; set;} = new List<Project>();
     }
 }

@@ -21,6 +21,7 @@ namespace WBS_backend.Services
         {
             return await _context.Projects
                 .Include(p => p.ProjectStatus)
+                .Include(p => p.Member)
                 .Select(p => new ProjectResponseDto
                 {
                     ProjectId = p.ProjectId,
@@ -36,7 +37,9 @@ namespace WBS_backend.Services
                     ProjectDeleteStatus = p.ProjectDeleteStatus,
                     MemberAuthorId = p.MemberAuthorId,
                     ProjectStatusId = p.ProjectStatusId,
-                    ProjectStatusName = p.ProjectStatus != null ? p.ProjectStatus.StatusName: "chưa xác định"
+                    ProjectStatusName = p.ProjectStatus != null ? p.ProjectStatus.StatusName: "chưa xác định",
+                    ProjectLeadId = p.ProjectLeadId,
+                    ProjectLeadName = p.Member != null ? p.Member.MemberFullName: "chưa xác định",
                 })
                 .OrderByDescending(p => p.ProjectId)
                 .ToListAsync();
@@ -51,7 +54,8 @@ namespace WBS_backend.Services
                 ProjectStatusId = createProjectRequest.ProjectStatusId,
                 ExpectedStartDate = createProjectRequest.ExpectedStartDate,
                 ExpectedEndDate = createProjectRequest.ExpectedEndDate,
-                MemberAuthorId = createProjectRequest.MemberAuthorId
+                MemberAuthorId = createProjectRequest.MemberAuthorId,
+                ProjectLeadId = createProjectRequest.ProjectLeadId
             };
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
@@ -76,6 +80,7 @@ namespace WBS_backend.Services
             if (value.EstimateTime.HasValue) project.EstimateTime = value.EstimateTime;
             if (value.SpentTime.HasValue) project.SpentTime = value.SpentTime;
             if (value.ProjectStatusId.HasValue) project.ProjectStatusId = value.ProjectStatusId;
+            if (value.ProjectLeadId.HasValue) project.ProjectLeadId = value.ProjectLeadId;
 
             await _context.SaveChangesAsync();
             return project;
@@ -84,6 +89,7 @@ namespace WBS_backend.Services
         {
             return await _context.Projects
                 .Include(p => p.ProjectStatus)
+                .Include(p => p.Member)
                 .Where(p => p.ProjectId == id && !p.ProjectDeleteStatus)
                 .Select(p => new ProjectResponseDto
                 {
@@ -99,7 +105,9 @@ namespace WBS_backend.Services
                     SpentTime = p.SpentTime,
                     ProjectStatusId = p.ProjectStatusId,
                     ProjectStatusName = p.ProjectStatus != null ? p.ProjectStatus.StatusName : "Chưa xác định",
-                    MemberAuthorId = p.MemberAuthorId
+                    MemberAuthorId = p.MemberAuthorId,
+                    ProjectLeadId = p.ProjectLeadId,
+                    ProjectLeadName = p.Member != null ? p.Member.MemberFullName: "chưa xác định",
                 })
                 .FirstOrDefaultAsync();
         }
