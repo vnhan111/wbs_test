@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_BASE_URL } from "../utils/constant";
 
 export interface ProjectResponse {
     projectId: number;
@@ -43,7 +44,7 @@ export interface UpdateProjectRequest{
 export const getAllProjectAPI = async () => {
     try {
         const token = localStorage.getItem("token");
-        const url = `http://localhost:5075/api/project`;
+        const url = `${API_BASE_URL}/project`;
         const response = await axios.get<ProjectResponse[]>(url, {
             headers: {
                 Authorization : `Bearer ${token}`, 
@@ -59,7 +60,7 @@ export const getAllProjectAPI = async () => {
 export const getProjectByIdAPI = async (projectId: number) => {
     try {
         const token = localStorage.getItem("token");
-        const url = `http://localhost:5075/api/project/${projectId}`;
+        const url = `${API_BASE_URL}/project/${projectId}`;
         const response = await axios.get<ProjectResponse>(url, {
             headers: {
                 Authorization : `Bearer ${token}`, 
@@ -75,7 +76,7 @@ export const getProjectByIdAPI = async (projectId: number) => {
 export const createProjectAPI = async (body: CreateProjectRequest) => {
     try {
         const token = localStorage.getItem("token");
-        const url = `http://localhost:5075/api/project/create`;
+        const url = `${API_BASE_URL}/project/create`;
         const response = await axios.post<ProjectResponse>(url, body, {
             headers: {
                 Authorization : `Bearer ${token}`, 
@@ -91,7 +92,7 @@ export const createProjectAPI = async (body: CreateProjectRequest) => {
 export const updateProjectAPI = async (projectId: number, body: UpdateProjectRequest) => {
     try{
         const token = localStorage.getItem("token");
-        const url = `http://localhost:5075/api/project/update/${projectId}`;
+        const url = `${API_BASE_URL}/project/update/${projectId}`;
         const response = await axios.patch<ProjectResponse>(url, body, {
             headers: {
                 Authorization : `Bearer ${token}`, 
@@ -107,7 +108,7 @@ export const updateProjectAPI = async (projectId: number, body: UpdateProjectReq
 export const deleteProjectAPI = async (projectId: number): Promise<boolean> => {
     try {
         const token = localStorage.getItem("token");
-        const url = `http://localhost:5075/api/project/delete/${projectId}`;
+        const url = `${API_BASE_URL}/project/delete/${projectId}`;
 
         const response = await axios.delete<boolean>(url, {
             headers: {
