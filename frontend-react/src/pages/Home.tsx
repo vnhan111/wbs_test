@@ -4,11 +4,13 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../store/Store';
 import { ProjectService } from "../service/projectService";
 import { ProjectStatusService } from '../service/projectStatusService';
+import { MemberService } from '../service/memberService';
 import { message } from 'antd';
 
 const Home: React.FC = () => {
     const { projects, isLoading } = useSelector((state: RootState) => state.project);
     const { projectStatuses } = useSelector((state: RootState) => state.projectStatus);
+    const { members } = useSelector((state: RootState) => state.member);
     const [currentEditId, setCurrentEditId] = useState<number | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -18,7 +20,7 @@ const Home: React.FC = () => {
         projectStatusId: 1,
         expectedStartDate: "",
         expectedEndDate: "",
-        memberAuthorId: 1
+        projectLeadId: 1
     })
 
     const [formEditData, setFormEditData] = useState({
@@ -27,10 +29,12 @@ const Home: React.FC = () => {
         projectStatusId: 1,
         expectedStartDate: "",
         expectedEndDate: "",
+        projectLeadId: 1
     })
     useEffect(() => {
         ProjectService.getAllProjects();
         ProjectStatusService.getAllProjectStatuses();
+        MemberService.getAllMembers();
     }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -56,7 +60,7 @@ const Home: React.FC = () => {
                 projectStatusId: Number(formData.projectStatusId),
                 expectedStartDate: formData.expectedStartDate,
                 expectedEndDate: formData.expectedEndDate,
-                memberAuthorId: Number(formData.memberAuthorId)
+                projectLeadId: Number(formData.projectLeadId)
             };
             const result = await ProjectService.createProject(createData);
 
@@ -69,7 +73,7 @@ const Home: React.FC = () => {
                     projectStatusId: 1,
                     expectedStartDate: "",
                     expectedEndDate: "",
-                    memberAuthorId: 1
+                    projectLeadId: 1
                 })
             }
         } catch (error) {
@@ -93,6 +97,7 @@ const Home: React.FC = () => {
                 expectedEndDate: result.data.expectedEndDate
                     ? result.data.expectedEndDate.split('T')[0]
                     : "",
+                projectLeadId: result.data.projectLeadId || 1
             });
         }
     };
@@ -106,6 +111,7 @@ const Home: React.FC = () => {
                 projectStatusId: formEditData.projectStatusId,
                 expectedStartDate: formEditData.expectedStartDate,
                 expectedEndDate: formEditData.expectedEndDate,
+                projectLeadId: formEditData.projectLeadId
             };
             const result = await ProjectService.updateProject(currentEditId, updateData);
             if (result.success) {
@@ -174,34 +180,34 @@ const Home: React.FC = () => {
                             <table className="w-full">
                                 <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                                     <tr>
-                                        <th className="px-10 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-10 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Action
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Project Name
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Status
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Priority
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Expected Start Date
                                         </th>
-                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Expected End Date
                                         </th>
-                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Skills
                                         </th>
-                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Project Lead
                                         </th>
-                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Check list status
                                         </th>
-                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                                             Check date
                                         </th>
                                     </tr>
@@ -278,7 +284,7 @@ const Home: React.FC = () => {
                                             </td>
 
                                             <td className="px-6 py-4 text-right text-sm text-gray-600 dark:text-gray-300">
-                                                {project.authorFullName || project.memberAuthorId || '-'}
+                                                {members.find((member) => member.memberId === project.projectLeadId)?.memberFullName || '-'}
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <span className="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
@@ -400,14 +406,19 @@ const Home: React.FC = () => {
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                         Project Leader
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="memberAuthorId"
-                                        value={formData.memberAuthorId}
+                                    <select
+                                        name = "projectLeadId"
+                                        value={formData.projectLeadId}
                                         onChange={handleInputChange}
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        placeholder="Enter name"
-                                    />
+                                    >
+                                        <option value={0}>Chọn trưởng dự án</option>
+                                        {members.map(member => (
+                                            <option key={member.memberId} value={member.memberId}>
+                                                {member.memberFullName}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
 
@@ -522,6 +533,25 @@ const Home: React.FC = () => {
                                         onChange={handleEditChange}
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                                     />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Project Leader
+                                    </label>
+                                    <select
+                                        name = "projectLeadId"
+                                        value={formEditData.projectLeadId}
+                                        onChange={handleEditChange}
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    >
+                                        <option value={0}>Chọn trưởng dự án</option>
+                                        {members.map(member => (
+                                            <option key={member.memberId} value={member.memberId}>
+                                                {member.memberFullName}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
 
