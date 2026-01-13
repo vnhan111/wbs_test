@@ -39,9 +39,9 @@ const Home: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ 
-            ...prev, 
-            [name]: name === "projectStatusId" ? (value ? Number(value) : prev.projectStatusId) : value 
+        setFormData(prev => ({
+            ...prev,
+            [name]: name === "projectStatusId" ? (value ? Number(value) : prev.projectStatusId) : value
         }));
     };
     const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -310,9 +310,9 @@ const Home: React.FC = () => {
             </main>
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+                    <button className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
                         onClick={() => setIsModalOpen(false)}>
-                    </div>
+                    </button>
                     <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-8 animate-in fade-in zoom-in duration-200">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -328,44 +328,40 @@ const Home: React.FC = () => {
 
                         <form onSubmit={handleSubmit} className="space-y-2">
                             <div className="grid grid-col-1 gap-2">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Project Code <span className="text-red-500">*</span>
-                                    </label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left">
+                                    Project Code <span className="text-red-500">*</span>
                                     <input
                                         type="text"
                                         name="projectCode"
                                         value={formData.projectCode}
                                         onChange={handleInputChange}
                                         required
-                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                                         placeholder="Enter project code"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Project Name
-                                    </label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left">
+                                    Project Name
                                     <input
                                         type="text"
                                         name="projectName"
                                         value={formData.projectName}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                                         placeholder="Enter project name"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Status
-                                    </label>
+
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left">
+                                    Status
                                     <select
                                         name="projectStatusId"
                                         value={formData.projectStatusId}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                                     >
                                         <option value={0}>Chọn trạng thái</option>
                                         {projectStatuses.map(status => (
@@ -374,43 +370,40 @@ const Home: React.FC = () => {
                                             </option>
                                         ))}
                                     </select>
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Expected Start Date
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left">
+                                    Expected Start Date
                                     <input
                                         type="date"
                                         name="expectedStartDate"
                                         value={formData.expectedStartDate}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Expected End Date
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left">
+                                    Expected End Date
                                     <input
                                         type="date"
                                         name="expectedEndDate"
                                         value={formData.expectedEndDate}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Project Leader
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-left">
+                                    Project Leader
                                     <select
-                                        name = "projectLeadId"
+                                        name="projectLeadId"
                                         value={formData.projectLeadId}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                                     >
                                         <option value={0}>Chọn trưởng dự án</option>
                                         {members.map(member => (
@@ -419,7 +412,8 @@ const Home: React.FC = () => {
                                             </option>
                                         ))}
                                     </select>
-                                </div>
+                                </label>
+
                             </div>
 
                             <div className="flex justify-end gap-4 pt-6">
@@ -461,10 +455,9 @@ const Home: React.FC = () => {
 
                         <form onSubmit={handleEditProject} className="space-y-2">
                             <div className="grid grid-col-1 gap-2">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Project Code <span className="text-red-500">*</span>
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Project Code <span className="text-red-500">*</span>
                                     <input
                                         type="text"
                                         name="projectCode"
@@ -474,12 +467,11 @@ const Home: React.FC = () => {
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                                         placeholder="Enter project code"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Project Name
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Project Name
                                     <input
                                         type="text"
                                         name="projectName"
@@ -488,12 +480,11 @@ const Home: React.FC = () => {
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                                         placeholder="Enter project name"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Status
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Status
                                     <select
                                         name="projectStatusId"
                                         value={formEditData.projectStatusId}
@@ -507,12 +498,10 @@ const Home: React.FC = () => {
                                             </option>
                                         ))}
                                     </select>
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Expected Start Date
-                                    </label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Expected Start Date
                                     <input
                                         type="date"
                                         name="expectedStartDate"
@@ -520,12 +509,11 @@ const Home: React.FC = () => {
                                         onChange={handleEditChange}
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Expected End Date
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Expected End Date
                                     <input
                                         type="date"
                                         name="expectedEndDate"
@@ -533,14 +521,13 @@ const Home: React.FC = () => {
                                         onChange={handleEditChange}
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                                     />
-                                </div>
+                                </label>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Project Leader
-                                    </label>
+
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Project Leader
                                     <select
-                                        name = "projectLeadId"
+                                        name="projectLeadId"
                                         value={formEditData.projectLeadId}
                                         onChange={handleEditChange}
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -552,7 +539,8 @@ const Home: React.FC = () => {
                                             </option>
                                         ))}
                                     </select>
-                                </div>
+                                </label>
+
                             </div>
 
                             <div className="flex justify-end gap-4 pt-6">
