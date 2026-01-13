@@ -7,18 +7,28 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using WBS_backend.Data;
 using WBS_backend.Services;
-using System.Text;
-using System;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load("production.env");
+
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("DefaultConnection string is missing!");
 
 // =========================
 // Database Configuration
 // =========================
+// builder.Services.AddDbContext<AppDbContext>(options =>
+//     options.UseMySql(
+//         builder.Configuration.GetConnectionString("DefaultConnection"),
+//         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+//     ));
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
     ));
 
 // =========================

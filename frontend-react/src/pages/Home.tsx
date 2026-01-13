@@ -501,7 +501,7 @@ const Home: React.FC = () => {
                                 </label>
 
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Expected Start Date
+                                    Expected Start Date{' '}
                                     <input
                                         type="date"
                                         name="expectedStartDate"

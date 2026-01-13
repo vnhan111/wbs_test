@@ -32,7 +32,7 @@ const Login: React.FC = () => {
             if (result.success) {
                 message.success("Login successfully!");
                 setTimeout(() => {
-                    navigate("/dashboard");
+                    navigate("/project");
                 }, 500);
             } else {
                 message.error("Username or password not match");
