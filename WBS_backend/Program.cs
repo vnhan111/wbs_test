@@ -7,6 +7,8 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using WBS_backend.Data;
 using WBS_backend.Services;
+using System.Text;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,16 +27,30 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        // Đọc JWT secret trực tiếp từ ENV (không dùng configuration["Jwt:Key"])
+        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
+            ?? throw new InvalidOperationException(
+                "JWT_SECRET environment variable is required. " +
+                "Please set it in production.env or when running Docker with -e JWT_SECRET=...");
+
+        // Kiểm tra độ dài key để đảm bảo an toàn (ít nhất 256 bits cho HS256)
+        if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Length < 32)
+        {
+            throw new InvalidOperationException(
+                "JWT_SECRET must be at least 32 characters long for secure signing.");
+        }
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            ValidIssuer = builder.Configuration["Jwt:Issuer"]
+                ?? throw new InvalidOperationException("Jwt:Issuer is required."),
+            ValidAudience = builder.Configuration["Jwt:Audience"]
+                ?? throw new InvalidOperationException("Jwt:Audience is required."),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
         };
     });
 

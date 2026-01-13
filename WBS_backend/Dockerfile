@@ -24,5 +24,6 @@ EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV TZ=Asia/Ho_Chi_Minh
- 
+ENV JWT_SECRET=dev-only-change-this-immediately-for-production-1234567890abcdef
+ENV ConnectionStrings__DefaultConnection="Server=host.docker.internal;Port=3306;Database=demo_wbs;User=root;Password=dev-only-change-this-immediately;Charset=utf8mb4;Allow User Variables=True;"
 ENTRYPOINT ["dotnet", "WBS_backend.dll"]

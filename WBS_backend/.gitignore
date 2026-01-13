@@ -72,3 +72,7 @@ TestResults/
 # Coverage
 *.coverage
 *.coveragexml
+
+#env
+*.env
+production.env
