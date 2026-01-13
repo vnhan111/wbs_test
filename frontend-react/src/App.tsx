@@ -43,26 +43,24 @@ const DashboardLayout: React.FC = () => {
 
 const AppContent: React.FC = () => {
   return (
-    <>
-      <Routes>
-        <Route path="/project" element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
-          <Route index element={<Home />} />
-        </Route>
+    <Routes>
+      <Route path="/project" element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+        <Route index element={<Home />} />
+      </Route>
 
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify-email" element = {<VerifyEmail />} />
-          <Route index element={<Login />} /> {/* Trang mặc định khi vào root */}
-        </Route>
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route index element={<Login />} /> {/* Trang mặc định khi vào root */}
+      </Route>
 
-        {/* 404 */}
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </>
+      {/* 404 */}
+      <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="*" element={<PageNotFound />} />
+    </Routes>
   );
 };
 
