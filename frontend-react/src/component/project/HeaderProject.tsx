@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../redux/slice/authSlice';
 
 const HeaderProject: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<string>('project');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleDarkMode = () => {
     if (document.documentElement.classList.contains('dark')) {
@@ -18,6 +23,11 @@ const HeaderProject: React.FC = () => {
       setIsDarkMode(true);
     }
   };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  }
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-md border-b border-gray-100 dark:border-gray-700 fixed top-0 left-0 w-full z-50">
@@ -153,10 +163,27 @@ const HeaderProject: React.FC = () => {
                   <path d="M240 192C240 147.8 275.8 112 320 112C364.2 112 400 147.8 400 192C400 236.2 364.2 272 320 272C275.8 272 240 236.2 240 192zM448 192C448 121.3 390.7 64 320 64C249.3 64 192 121.3 192 192C192 262.7 249.3 320 320 320C390.7 320 448 262.7 448 192zM144 544C144 473.3 201.3 416 272 416L368 416C438.7 416 496 473.3 496 544L496 552C496 565.3 506.7 576 520 576C533.3 576 544 565.3 544 552L544 544C544 446.8 465.2 368 368 368L272 368C174.8 368 96 446.8 96 544L96 552C96 565.3 106.7 576 120 576C133.3 576 144 565.3 144 552L144 544z" /></svg>
               </button>
               {isUserMenuOpen && (
-                <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-10">
-                  <Link to="/login" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-green-500 dark:hover:text-white">
+                <div className="absolute left-0 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden w-[150px]">
+                  <button
+                    onClick={() => handleLogout()}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-200"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
                     Log out
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>

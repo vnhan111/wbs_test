@@ -20,13 +20,11 @@ const PageLoader = () => (
 
 const AuthLayout: React.FC = () => {
   return (
-    <>
-      <main className="min-h-screen">
-        <Suspense fallback={<PageLoader />}>
-          <Outlet />
-        </Suspense>
-      </main>
-    </>
+    <main className="min-h-screen">
+      <Suspense fallback={<PageLoader />}>
+        <Outlet />
+      </Suspense>
+    </main>
   );
 };
 

@@ -104,5 +104,23 @@ namespace WBS_backend.Controllers
                 return StatusCode(500, new { message = "Lỗi hệ thống: " + ex.Message });
             }
         }
+
+        [HttpGet("/api/project/member/{memberId}")]
+        public async Task<IActionResult> GetProjectsByMemberId(int memberId)
+        {
+            try
+            {
+                var result = await _projectService.GetProjectsByMemberIdAsync(memberId);
+                if (result == null)
+                {
+                    return NotFound(new { message = $"Not found any project with Member ID = {memberId}" });
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "System error: " + ex.Message });
+            }
+        }
     }
 }

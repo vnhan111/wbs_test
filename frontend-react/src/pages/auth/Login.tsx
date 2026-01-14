@@ -85,6 +85,7 @@ const Login: React.FC = () => {
                                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                             />
                             <button
+                                type="button"
                                 onClick={handlePasswordVisibilityToggle}
                                 className="absolute inset-y-2 right-1 flex items-center pr-3 text-gray-500 hover:text-gray-700 border-white hover:border-white active:border-white"
                             >

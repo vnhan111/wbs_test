@@ -24,7 +24,7 @@ export interface LoginResponse {
     token: string;
     message: string;
     success: boolean;
-    user: UserResponse;
+    member: UserResponse;
 }
 export interface RequestPasswordRequest {
     password: string;

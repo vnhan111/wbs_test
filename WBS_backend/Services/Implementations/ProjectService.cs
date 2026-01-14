@@ -121,5 +121,34 @@ namespace WBS_backend.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<ProjectResponseDto>> GetProjectsByMemberIdAsync(int memberId)
+        {
+            return await _context.Projects
+                .Include(p => p.ProjectStatus)
+                .Include(p => p.Member)
+                .Where(p => p.ProjectLeadId == memberId && !p.ProjectDeleteStatus)
+                .Select(p => new ProjectResponseDto
+                {
+                    ProjectId = p.ProjectId,
+                    ProjectCode = p.ProjectCode,
+                    ProjectName = p.ProjectName,
+                    ExpectedStartDate = p.ExpectedStartDate,
+                    ExpectedEndDate = p.ExpectedEndDate,
+                    ActualStartDate = p.ActualStartDate,
+                    ActualEndDate = p.ActualEndDate,
+                    WorkProgress = p.WorkProgress,
+                    EstimateTime = p.EstimateTime,
+                    SpentTime = p.SpentTime,
+                    ProjectDeleteStatus = p.ProjectDeleteStatus,
+                    MemberAuthorId = p.MemberAuthorId,
+                    ProjectStatusId = p.ProjectStatusId,
+                    ProjectStatusName = p.ProjectStatus != null ? p.ProjectStatus.StatusName : "chưa xác định",
+                    ProjectLeadId = p.ProjectLeadId,
+                    ProjectLeadName = p.Member != null ? p.Member.MemberFullName : "chưa xác định",
+                })
+                .OrderByDescending(p => p.ProjectId)
+                .ToListAsync();
+        }
     }
 }

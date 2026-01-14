@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export interface UserInfo {
+export interface UserResponse {
   memberId: string;
   memberFullName: string;
   email: string;
@@ -11,26 +11,26 @@ export interface UserInfo {
 }
 
 interface AuthState {
-  user: UserInfo | null; 
+  member: UserResponse | null; 
   token: string | null;
   isAuthenticated: boolean;
   error: string | null;
 }
 
-const loadFromStorage = (): { token: string | null; user: UserInfo | null } => {
+const loadFromStorage = (): { token: string | null; member: UserResponse | null } => {
   try {
     const token = localStorage.getItem("token");
-    const saveUser = localStorage.getItem("user");
-    const user = saveUser ? JSON.parse(saveUser) : null;
-    return { token, user };
+    const saveMember = localStorage.getItem("member");
+    const member = saveMember ? JSON.parse(saveMember) : null;
+    return { token, member };
   } catch (error) {
     console.error("Error loading from localStorage:", error);
-    return { token: null, user: null };
+    return { token: null, member: null };
   }
 };
 
 const initialState: AuthState = {
-  user: loadFromStorage().user,
+  member: loadFromStorage().member,
   token: loadFromStorage().token,
   isAuthenticated: !!loadFromStorage().token,
   error: null,
@@ -41,19 +41,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Login thành công
-    successLogin: (state, action: PayloadAction<{ token: string; user?: UserInfo; message: string, success: boolean }>) => {
-      const { token, user } = action.payload;
+    successLogin: (state, action: PayloadAction<{ token: string; member?: UserResponse; message: string, success: boolean }>) => {
+      const { token, member } = action.payload;
 
       state.token = token;
       state.isAuthenticated = true;
       state.error = null;
 
-      if(user){
-        state.user = user;
+      if(member){
+        state.member = member;
       }
 
       localStorage.setItem("token", token);
-      if (user) localStorage.setItem("user", JSON.stringify(user));
+      if (member) localStorage.setItem("member", JSON.stringify(member));
     },
 
     // Login thất bại
@@ -64,8 +64,8 @@ const authSlice = createSlice({
     },
 
     // Register thành công
-    successRegister: (state, action: PayloadAction<UserInfo>) => {
-      state.user = action.payload;
+    successRegister: (state, action: PayloadAction<UserResponse>) => {
+      state.member = action.payload;
       state.error = null;
     },
 
@@ -77,8 +77,8 @@ const authSlice = createSlice({
     //success verify
     successVerify: (state) => {
       state.error = null;
-      if(state.user){
-        state.user.isActive = true;
+      if(state.member){
+        state.member.isActive = true;
       }
     },
 
@@ -88,7 +88,7 @@ const authSlice = createSlice({
 
     // Logout
     logout: (state) => {
-      state.user = null;
+      state.member = null;
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
@@ -102,9 +102,9 @@ const authSlice = createSlice({
       state.error = null;
     },
 
-    setUser: (state, action: PayloadAction<UserInfo>) => {
-      state.user = action.payload;
-      localStorage.setItem("user", JSON.stringify(action.payload)); // ✅ Save to localStorage
+    setMember: (state, action: PayloadAction<UserResponse>) => {
+      state.member = action.payload;
+      localStorage.setItem("member", JSON.stringify(action.payload)); 
       if (action.payload?.loginName) {
         localStorage.setItem("email", action.payload.loginName);
       }
@@ -113,11 +113,11 @@ const authSlice = createSlice({
     // Reset toàn bộ state (nếu cần)
     reset: (state) => {
       state.token = null;
-      state.user = null;
+      state.member = null;
       state.isAuthenticated = false;
       state.error = null;
       localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      localStorage.removeItem("member");
     },
   },
 });
@@ -131,7 +131,7 @@ export const {
   clearError,
   successVerify,
   failVerify,
-  setUser,
+  setMember,
   reset,
 } = authSlice.actions;
 

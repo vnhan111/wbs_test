@@ -11,5 +11,6 @@ namespace WBS_backend.Services
         Task<Project> UpdateProject(int idProject, UpdateProjectRequest value);
         Task<ProjectResponseDto?> GetProjectByIdAsync(int id);
         Task<bool> DeleteProjectByIdAsync(int id);
+        Task<List<ProjectResponseDto>> GetProjectsByMemberIdAsync(int memberId);
     }
 }

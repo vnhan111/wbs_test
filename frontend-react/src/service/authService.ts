@@ -21,16 +21,16 @@ import {
 const { dispatch } = Store;
 
 export class AuthService {
-  static async login(userData: LoginRequest) {
+  static async login(memberData: LoginRequest) {
     try {
       console.log("AuthService: Start login");
-      const response = await loginAPI(userData);
+      const response = await loginAPI(memberData);
       if (response) {
         console.log("AuthService: Login successful");
         dispatch(
           successLogin({
             token: response.token,
-            user: response.user,
+            member: response.member,
             message: response.message,
             success: response.success,
           })
