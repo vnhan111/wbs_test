@@ -34,7 +34,7 @@ jobs:
       # 4. Run Vitest tests + generate coverage (LCOV format cho SonarCloud)
       - name: Run tests and generate coverage
         working-directory: ./frontend-react
-        run: npm run test -- --coverage --reporter=lcov  # hoặc vitest run --coverage
+        run: npm run test -- --coverage --reporter=lcov --reporter=json --reporter=json-summary  # hoặc vitest run --coverage
 
       # 5. SonarCloud Scan (tùy chọn - nếu bạn đang dùng SonarCloud để theo dõi coverage)
       - name: SonarCloud Scan
@@ -52,5 +52,6 @@ jobs:
         if: always()  # Chạy cả khi test fail
         uses: davelosert/vitest-coverage-report-action@v2
         with:
+          working-directory: ./frontend-react
           json-summary-path: ./frontend-react/coverage/coverage-summary.json
           json-final-path: ./frontend-react/coverage/coverage-final.json

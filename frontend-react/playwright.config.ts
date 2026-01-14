@@ -13,6 +13,13 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './test_e2e',
+  testMatch: '**/*.spec.ts',
+  testIgnore: [
+    '**/node_modules/**',
+    '**/unittest/**',   // Thư mục chứa Unit Test của Jest
+    '**/tests/**',       // Thư mục chứa Unit Test của Vitest
+    '**/src/**',         // Tránh quét vào code logic React
+  ],
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
