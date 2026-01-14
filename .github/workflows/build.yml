@@ -10,7 +10,7 @@ on:
 jobs:
   sonarqube:
     name: SonarQube Frontend
-    runs-on: ubuntu-latest  # Dùng ubuntu nhanh hơn cho JS
+    runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@v4
         with:
@@ -21,6 +21,6 @@ jobs:
         with:
           args: >
             -Dsonar.organization=vnhan111-1
-            -Dsonar.projectKey=vnhan111_wbs_test  # ← projectKey frontend
+            -Dsonar.projectKey=vnhan111_wbs_test 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
