@@ -26,7 +26,6 @@ jobs:
       JWT_SECRET: "dev-secret-please-override"
       Jwt__Issuer: "my-local-api"
       Jwt__Audience: "my-local-api"
-      RESULTS_DIR: "${{ github.workspace }}/WBS_backend.Tests/TestResults"
 
     steps:
       - uses: actions/checkout@v4
@@ -53,8 +52,13 @@ jobs:
         run: dotnet build --no-restore
         working-directory: WBS_backend
 
+      - name: Set RESULTS_DIR
+        run: echo "RESULTS_DIR=$(pwd)/TestResults" >> $GITHUB_ENV
+        working-directory: WBS_backend.Tests
+
       - name: Prepare results directory
         run: mkdir -p "$RESULTS_DIR"
+        working-directory: WBS_backend.Tests
 
       - name: Run tests
         run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx" --results-directory "$RESULTS_DIR"
