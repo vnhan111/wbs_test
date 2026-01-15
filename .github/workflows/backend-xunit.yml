@@ -65,19 +65,35 @@ jobs:
           Jwt__Issuer: ${{ env.Jwt__Issuer }}
           Jwt__Audience: ${{ env.Jwt__Audience }}
 
+      - name: Locate TRX
+        id: find_trx
+        run: |
+          set -e
+          TRX=$(find TestResults -maxdepth 3 -name "*.trx" | head -n1 || true)
+          if [ -z "$TRX" ]; then
+            TRX=$(find . -maxdepth 5 -name "*.trx" | head -n1 || true)
+          fi
+          if [ -z "$TRX" ]; then
+            echo "No TRX found" >&2
+            exit 1
+          fi
+          echo "Found TRX: $TRX"
+          echo "trx=$TRX" >> "$GITHUB_OUTPUT"
+        working-directory: WBS_backend.Tests
+
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
       - name: Generate HTML report
         run: |
-          reportgenerator -reports:TestResults/test-results.trx -targetdir:TestResults/html -reporttypes:Html
+          reportgenerator -reports:${{ steps.find_trx.outputs.trx }} -targetdir:TestResults/html -reporttypes:Html
         working-directory: WBS_backend.Tests
 
       - name: Verify results file
         if: always()
         run: |
           ls -R TestResults || true
-          test -f TestResults/test-results.trx || (echo "TRX file missing" && exit 1)
+          test -f "${{ steps.find_trx.outputs.trx }}" || (echo "TRX file missing" && exit 1)
         working-directory: WBS_backend.Tests
 
       - name: List TestResults
