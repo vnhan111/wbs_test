@@ -80,16 +80,16 @@ jobs:
           find . -name "*.trx" -type f 2>/dev/null || echo "No .trx files found"
         working-directory: WBS_backend.Tests
 
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      - name: Install trx2html
+        run: dotnet tool install --global trx2html
 
-      - name: Generate HTML report
+      - name: Generate HTML report from TRX
         if: always()
         run: |
           TRX_FILE=$(find TestResults -name "*.trx" -type f | head -n1)
           if [ -n "$TRX_FILE" ]; then
-            echo "Generating report from: $TRX_FILE"
-            reportgenerator -reports:"$TRX_FILE" -targetdir:TestResults/html -reporttypes:Html
+            echo "Generating HTML report from: $TRX_FILE"
+            trx2html "$TRX_FILE" --output TestResults/test-report.html
           else
             echo "No TRX file found, skipping report generation"
           fi
