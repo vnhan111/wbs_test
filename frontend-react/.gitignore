@@ -56,6 +56,7 @@ frontend-react/.env.production.local
 frontend-react/.env.staging.local
 node_modules/
 frontend-react/coverage/
+coverage/
 
 # Logs
 logs

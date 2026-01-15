@@ -53,5 +53,8 @@ jobs:
         if: always()  # Chạy cả khi test fail
         uses: davelosert/vitest-coverage-report-action@v2
         with:
+          working-directory: ./frontend-react
+          vite-config-path: ./vite.config.ts
+          vitest-config-path: ./vitest.config.ts
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
