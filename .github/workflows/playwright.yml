@@ -1,9 +1,9 @@
 name: CI Backend + E2E
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, playwright ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, playwright ]
 
 jobs:
   backend:
