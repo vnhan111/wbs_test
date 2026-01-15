@@ -60,7 +60,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
         working-directory: .
 
-      - name: Run tests with TRX output
+      - name: Run tests with Coverage
         id: run_tests
         continue-on-error: true
         run: |
@@ -68,6 +68,7 @@ jobs:
           dotnet test --configuration Release --no-build \
             --logger "trx;LogFileName=test-results.trx" \
             --logger "console;verbosity=detailed" \
+            --collect:"XPlat Code Coverage" \
             --results-directory TestResults
         working-directory: WBS_backend.Tests
         env:
@@ -81,8 +82,8 @@ jobs:
         run: |
           echo "=== TestResults folder ==="
           ls -laR TestResults || echo "TestResults not found"
-          echo "=== Find all .trx files ==="
-          find . -name "*.trx" -type f 2>/dev/null || echo "No .trx files found"
+          echo "=== Find coverage files ==="
+          find . -name "coverage.cobertura.xml" -type f 2>/dev/null || echo "No coverage files found"
         working-directory: WBS_backend.Tests
 
       - name: Test Report
@@ -94,11 +95,24 @@ jobs:
           reporter: dotnet-trx
           fail-on-error: false
 
-      - name: Generate HTML Report
+      - name: Install ReportGenerator
+        if: always()
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Generate Coverage HTML Report
         if: always()
         run: |
-          npm install -g xunit-viewer
-          xunit-viewer -r TestResults/test-results.trx -o TestResults/test-report.html
+          COVERAGE_FILE=$(find TestResults -name "coverage.cobertura.xml" -type f | head -n1)
+          if [ -n "$COVERAGE_FILE" ]; then
+            echo "Found coverage file: $COVERAGE_FILE"
+            reportgenerator \
+              -reports:"$COVERAGE_FILE" \
+              -targetdir:TestResults/coverage-report \
+              -reporttypes:Html
+            echo "Coverage report generated"
+          else
+            echo "No coverage file found"
+          fi
         working-directory: WBS_backend.Tests
 
       - name: List final TestResults
