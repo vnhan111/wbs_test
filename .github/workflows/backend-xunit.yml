@@ -52,6 +52,10 @@ jobs:
         run: dotnet build --no-restore
         working-directory: WBS_backend
 
+      - name: Prepare results directory
+        run: mkdir -p TestResults
+        working-directory: WBS_backend.Tests
+
       - name: Run tests
         run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx" --results-directory TestResults
         working-directory: WBS_backend.Tests
@@ -63,7 +67,7 @@ jobs:
 
       - name: List TestResults
         if: always()
-        run: ls -R TestResults
+        run: ls -R TestResults || true
         working-directory: WBS_backend.Tests
 
       - uses: actions/upload-artifact@v4
