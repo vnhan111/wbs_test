@@ -59,7 +59,7 @@ public class JwtService : IJwtService
             return null;
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_configuration["JWT_SECRET"]!);
+        var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET environment variable is required for JWT signing."));
 
         try
         {
