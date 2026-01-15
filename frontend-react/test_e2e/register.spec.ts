@@ -113,7 +113,8 @@ test.describe('Register Functionality - With Real Backend (Current Component)', 
 
     // BỎ check loading button vì backend trả lỗi nhanh
     // Chỉ check message lỗi (có thể là 400 hoặc message cụ thể)
-    await expect(page.locator('.ant-message-notice-content')).toContainText(/400|failed|exist|duplicate/i, { timeout: 15000 });
+    await expect(page.getByText(/đã tồn tại|exist|duplicate|failed|400|đăng ký thất bại/i, { exact: false }))
+    .toBeVisible({ timeout: 10000 });  // điều chỉnh regex theo message thực tế của bạn
 
     // Button vẫn là Register
     await expect(page.getByRole('button', { name: 'Register' })).toBeVisible();
