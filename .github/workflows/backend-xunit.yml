@@ -53,7 +53,7 @@ jobs:
         working-directory: WBS_backend
 
       - name: Run tests
-        run: dotnet test --no-build --logger trx --results-directory TestResults
+        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx" --results-directory TestResults
         working-directory: WBS_backend.Tests
         env:
           ConnectionStrings__DefaultConnection: ${{ env.ConnectionStrings__DefaultConnection }}
@@ -62,6 +62,7 @@ jobs:
           Jwt__Audience: ${{ env.Jwt__Audience }}
 
       - name: List TestResults
+        if: always()
         run: ls -R TestResults
         working-directory: WBS_backend.Tests
 
