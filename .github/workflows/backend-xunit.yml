@@ -1,0 +1,68 @@
+name: Backend xUnit
+on:
+  push:
+    branches: [ main, xunit ]
+  pull_request:
+    branches: [ main, xunit ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wbs
+          MYSQL_USER: wbs
+          MYSQL_PASSWORD: wbs
+        ports: [ "3306:3306" ]
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+
+    env:
+      ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=wbs;Uid=wbs;Pwd=wbs;"
+      JWT_SECRET: "dev-secret-please-override"
+      Jwt__Issuer: "my-local-api"
+      Jwt__Audience: "my-local-api"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: "8.0.x" }
+
+      - name: Install MySQL client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            mysqladmin ping -h 127.0.0.1 -proot && exit 0
+            sleep 2
+          done
+          exit 1
+
+      - name: Restore
+        run: dotnet restore
+        working-directory: WBS_backend
+
+      - name: Build
+        run: dotnet build --no-restore
+        working-directory: WBS_backend
+
+      - name: Run tests
+        run: dotnet test --no-build --logger trx --results-directory TestResults
+        working-directory: WBS_backend.Tests
+        env:
+          ConnectionStrings__DefaultConnection: ${{ env.ConnectionStrings__DefaultConnection }}
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+          Jwt__Issuer: ${{ env.Jwt__Issuer }}
+          Jwt__Audience: ${{ env.Jwt__Audience }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dotnet-test-results
+          path: WBS_backend.Tests/TestResults
