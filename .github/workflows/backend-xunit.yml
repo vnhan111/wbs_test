@@ -80,8 +80,8 @@ jobs:
           find . -name "*.trx" -type f 2>/dev/null || echo "No .trx files found"
         working-directory: WBS_backend.Tests
 
-      - name: Install trx2html
-        run: dotnet tool install --global trx2html
+      - name: Install LiquidTestReports
+        run: dotnet tool install --global LiquidTestReports.Cli
 
       - name: Generate HTML report from TRX
         if: always()
@@ -89,7 +89,7 @@ jobs:
           TRX_FILE=$(find TestResults -name "*.trx" -type f | head -n1)
           if [ -n "$TRX_FILE" ]; then
             echo "Generating HTML report from: $TRX_FILE"
-            trx2html "$TRX_FILE" --output TestResults/test-report.html
+            liquid --inputs "File=$TRX_FILE" --output-file TestResults/test-report.html
           else
             echo "No TRX file found, skipping report generation"
           fi
