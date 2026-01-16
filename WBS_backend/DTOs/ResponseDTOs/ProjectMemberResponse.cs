@@ -12,4 +12,9 @@ namespace WBS_backend.DTOs.ResponseDTOs
         public DateTime? EndDate { get; set;}
         public bool IsCurrent { get; set; }
     }
+    public class RoleProjectMemberResponse
+    {
+        public int RoleId {get; set;}
+        public string? RoleName {get; set;}
+    }
 }
