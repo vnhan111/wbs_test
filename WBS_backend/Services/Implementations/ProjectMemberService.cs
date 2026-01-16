@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using WBS_backend.Data;
 using WBS_backend.DTOs;
 using WBS_backend.DTOs.RequestDTOs;
@@ -37,6 +38,55 @@ namespace WBS_backend.Services
                 .OrderBy(r => r.MemberFullName)
                 .ThenByDescending(r => r.StartDate)
                 .ToListAsync();
+        }
+        public async Task<List<RoleProjectMemberResponse>> GetAllRoleAsync()
+        {
+            return await _context.Roles
+                .Select(r => new RoleProjectMemberResponse
+                {
+                    RoleId = r.RoleId,
+                    RoleName = r.RoleName
+                })
+                .ToListAsync();
+        }
+         public async Task<ProjectMemberResponse> AddMemberForProjectId(int idProject,ProjectMemberRequest projectMemberRequest)
+        {
+            var projectExists = await _context.Projects.FindAsync(idProject) ?? throw new KeyNotFoundException($"Không tìm thấy project với id = {idProject}");
+            var memberExists = await _context.Members.AnyAsync(m => m.MemberId == projectMemberRequest.MemberId);
+            if (!memberExists)
+            {
+                throw new KeyNotFoundException($"Không tìm thấy member với id = {projectMemberRequest.MemberId}");
+            }
+            var duplicate = await _context.ProjectMembers.AnyAsync(pm => pm.ProjectId == idProject && pm.MemberId == projectMemberRequest.MemberId);
+            if (duplicate)
+            {
+                throw new KeyNotFoundException($"Member với id = {projectMemberRequest.MemberId} đã tồn tại trong Project với id = {idProject}");
+            }
+            var project_member = new ProjectMember
+            {
+                ProjectId = idProject,
+                MemberId = projectMemberRequest.MemberId,
+                RoleId = projectMemberRequest.RoleId,
+                StartDate = projectMemberRequest.StartDate,
+                EndDate = projectMemberRequest.EndDate,
+                IsCurrent = projectMemberRequest.IsCurrent ?? true
+            };
+            _context.ProjectMembers.Add(project_member);
+            await _context.SaveChangesAsync();
+
+            await _context.Entry(project_member).Reference(pm => pm.Member).LoadAsync();
+            await _context.Entry(project_member).Reference(pm => pm.Role).LoadAsync();
+            
+            return new ProjectMemberResponse
+            {
+                MemberId = project_member.MemberId,
+                MemberFullName = project_member.Member.MemberFullName ?? "null",
+                RoleId = project_member.RoleId ?? 0,
+                RoleName = project_member.Role?.RoleName,
+                StartDate = project_member.StartDate,
+                EndDate = project_member.EndDate,
+                IsCurrent = project_member.IsCurrent
+            };
         }
     }
 }
