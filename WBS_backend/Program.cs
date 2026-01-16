@@ -8,6 +8,7 @@ using Newtonsoft.Json.Converters;
 using WBS_backend.Data;
 using WBS_backend.Services;
 using dotenv.net;
+using WBS_backend.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -139,6 +140,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectStatusService, ProjectStatusService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IProjectMemberService, ProjectMemberService>();
 // builder.Services.AddScoped<IMemberService, MemberService>();
 
 // =========================

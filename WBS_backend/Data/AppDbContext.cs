@@ -9,7 +9,9 @@ public class AppDbContext : DbContext
     public DbSet<Member> Members { get; set; }
     public DbSet<Project> Projects {get; set; }
     public DbSet<ProjectStatus> ProjectStatus {get; set;}
-
+    public DbSet<ProjectMember> ProjectMembers {get; set;}
+    public DbSet<Role> Roles {get; set;}
+    public DbSet<Level> Levels {get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -64,6 +66,39 @@ public class AppDbContext : DbContext
             entity.Property(ps => ps.IsActive)
                 .HasColumnName("is_active")
                 .HasDefaultValue(true);
+        });
+        modelBuilder.Entity<ProjectMember>(entity =>
+        {
+            entity.ToTable("tbl_midate_project_member");
+
+            entity.HasKey(pm => pm.MediateProjectMemberId);
+            entity.Property(pm => pm.MediateProjectMemberId)
+                .HasColumnName("mediate_project_member_id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(pm => pm.ProjectId).HasColumnName("project_id").IsRequired();
+            entity.Property(pm => pm.MemberId).HasColumnName("member_id").IsRequired();
+
+            entity.Property(pm => pm.RoleId).HasColumnName("role_id").IsRequired(false);
+            entity.Property(pm => pm.LevelId).HasColumnName("level_id").IsRequired(false);
+
+            entity.Property(pm => pm.Experience)
+                .HasColumnName("experience")
+                .HasDefaultValue(0);
+
+            entity.Property(pm => pm.IsCurrent)
+                .HasColumnName("is_current")
+                .HasDefaultValue(true);
+
+            entity.Property(pm => pm.StartDate)
+                .HasColumnName("start_date")
+                .IsRequired();
+
+            entity.Property(pm => pm.EndDate).HasColumnName("end_date").IsRequired(false);
+
+            entity.HasIndex(pm => new { pm.ProjectId, pm.MemberId })
+                .IsUnique()
+                .HasDatabaseName("uk_project_member");
         });
     } 
 }
