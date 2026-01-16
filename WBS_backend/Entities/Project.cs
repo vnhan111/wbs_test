@@ -61,5 +61,6 @@ namespace WBS_backend.Entities
         public int? ProjectLeadId {get; set;}
         [ForeignKey("ProjectLeadId")]
         public virtual Member? Member {get; set; }
+        public virtual ICollection<ProjectMember> ProjectMembers { get; set; } = new List<ProjectMember>();
     }
 }
