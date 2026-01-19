@@ -37,7 +37,7 @@ namespace WBS_backend.Controllers
             }
         }
         
-        [HttpGet("/roles")]
+        [HttpGet("roles")]
         public async Task<IActionResult> GetAllRole()
         {
             try

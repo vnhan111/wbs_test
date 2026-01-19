@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { Input, Button, Progress, Table, Form, Select, DatePicker, Popconfirm } from 'antd'
+import { Input, Button, Progress, Table, Form, Select, DatePicker, Popconfirm, message } from 'antd'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { ProjectService } from '../../service/projectService';
-import type { ProjectMemberResponse } from '../../api/projectMemberAPI';
+import type { AddMemberRequest, ProjectMemberResponse } from '../../api/projectMemberAPI';
 import { ProjectMemberService } from '../../service/projectMemberService';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/Store';
+import { MemberService } from '../../service/memberService';
+import { RoleService } from '../../service/roleService';
 
 interface ProjectDetailProps {
   isOpen: boolean;
@@ -29,6 +31,11 @@ interface ProjectDetail {
   members: ProjectMemberResponse[];
 }
 
+interface EditMemberRecord extends ProjectMemberResponse {
+  key: string;
+  isNew?: boolean;
+}
+
 const viewData: ProjectDetail = {
   projectId: 0,
   projectName: '',
@@ -46,9 +53,13 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
 
   const [isEditMemberOpen, setIsEditMemberOpen] = useState(false);
   const [projectMemberData, setProjectMemberData] = useState<ProjectMemberResponse[]>([]);
+  const [editMemberData, setEditMemberData] = useState<EditMemberRecord[]>([]);
   const [projectData, setProjectData] = useState<ProjectDetail>(viewData);
+  const [savingMember, setSavingMember] = useState(false);
   // const { selectedProject } = useSelector((state: RootState) => state.project);
   const { projects } = useSelector((state: RootState) => state.project);
+  const { members } = useSelector((state: RootState) => state.member);
+  const { roles } = useSelector((state: RootState) => state.role);
   const { Option } = Select;
 
   const loadProjectDetail = async (projectId: number) => {
@@ -86,6 +97,21 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
       loadProjectDetail(currentProjectId);
     }
   }, [isOpen, currentProjectId]);
+
+  React.useEffect(() => {
+    MemberService.getAllMembers();
+    RoleService.getAllRoles();
+  }, [])
+
+  React.useEffect(() => {
+    if (isEditMemberOpen) {
+      const formatted = projectMemberData.map((m) => ({
+        ...m,
+        key: m.mediateProjectMemberId?.toString() || `existing-${m.memberId}-${Date.now()}`,
+      }));
+      setEditMemberData(formatted);
+    }
+  }, [isEditMemberOpen, projectMemberData]);
 
   if (!isOpen) return null;
 
@@ -195,7 +221,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                 >
                   {projectData.members.map(member => (
-                    <Select.Option key = {member.memberId} value = {member.memberId} >
+                    <Select.Option key={member.memberId} value={member.memberId} >
                       {member.memberFullName}
                     </Select.Option>
                   ))}
@@ -245,34 +271,95 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
 
               {/* Nội dung table editable */}
               {(() => {
-                // const handleChange = (value: string | null, key: number, dataIndex: keyof ProjectMemberResponse) => {
-                //   setProjectMemberData(prev =>
-                //     prev.map(item =>
-                //       item.mediateProjectMemberId === key ? { ...item, [dataIndex]: value } : item
-                //     )
-                //   );
-                // };
+                const handleAdd = () => {
+                  const newMember = {
+                    key: `new-${Date.now()}`,
+                    mediateProjectMemberId: 0,
+                    memberId: 0,
+                    memberFullName: '',
+                    roleId: 0,
+                    roleName: '',
+                    startDate: '',
+                    endDate: '',
+                    isCurrent: true,
+                    isNew: true,
+                  };
+                  setEditMemberData((prev) => [...prev, newMember]);
+                };
 
-                // const handleDateChange = (_date: dayjs.Dayjs | null, dateString: string, key: number, field: 'startDate' | 'endDate') => {
-                //   handleChange(dateString, key, field);
-                // };
+                const handleDelete = (key: string) => {
+                  setEditMemberData((prev) => prev.filter((item) => item.key !== key));
+                };
 
-                // const handleAdd = () => {
-                //   const newMember: CreateMemberRequest = {
-                //     memberId: 0,
-                //     roleId: 0,
-                //     startDate: '',
-                //     endDate: '',
-                //     isCurrent: false,
-                //   };
-                //   setProjectMemberData([...projectMemberData, newMember]);
-                // };
+                const handleFieldChange = (key: string, field: keyof ProjectMemberResponse, value: any) => {
+                  setEditMemberData((prev) =>
+                    prev.map((item) => {
+                      if (item.key === key) {
+                        const updated = { ...item, [field]: value };
+                        // Nếu thay đổi memberId, lấy tên thành viên
+                        if (field === 'memberId') {
+                          const selectedMember = members.find(m => m.memberId === value);
+                          updated.memberFullName = selectedMember?.memberFullName || '';
+                        }
+                        // Nếu thay đổi roleId, lấy tên vai trò
+                        if (field === 'roleId') {
+                          const selectedRole = roles.find(r => r.roleId === value);
+                          updated.roleName = selectedRole?.roleName || '';
+                        }
+                        return updated;
+                      }
+                      return item;
+                    })
+                  );
+                };
 
-                // const handleDelete = (key: string) => {
-                //   setDataSource(prev => prev.filter(item => item.key !== key));
-                // };
+                // Lưu thay đổi
+                const handleSave = async () => {
+                  const hasError = editMemberData.some(
+                    (m) => !m.memberId || m.memberId === 0 || !m.roleId || !m.startDate || !m.endDate
+                  );
 
-                const columns: ColumnsType<ProjectMemberResponse> = [
+                  if (hasError) {
+                    message.error('Vui lòng điền đầy đủ: Thành viên, Vai trò và Ngày bắt đầu');
+                    return;
+                  }
+
+                  setSavingMember(true);
+                  message.loading('Đang lưu...', 0);
+
+                  try {
+                    const newMembers = editMemberData.filter((m) => m.isNew);
+
+                    for (const member of newMembers) {
+                      const payload: AddMemberRequest = {
+                        memberId: member.memberId,
+                        roleId: member.roleId,
+                        startDate: member.startDate,
+                        endDate: member.endDate,
+                        isCurrent: member.isCurrent,
+                      };
+
+                      const res = await ProjectMemberService.addMember(currentProjectId, payload);
+
+                      if (!res.success) {
+                        throw new Error(res.error || `Thêm ${member.memberFullName || 'thành viên'} thất bại`);
+                      }
+                    }
+
+                    message.success('Đã lưu thành công!');
+                    setIsEditMemberOpen(false);
+
+                    await loadProjectDetail(currentProjectId);
+                  } catch (err: any) {
+                    message.error(err.message || 'Có lỗi xảy ra khi lưu');
+                    console.error(err);
+                  } finally {
+                    setSavingMember(false);
+                    message.destroy();
+                  }
+                };
+
+                const columns: ColumnsType<EditMemberRecord> = [
                   {
                     title: 'Order',
                     dataIndex: 'order',
@@ -287,15 +374,17 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                     align: 'center',
                     render: (_, record) => (
                       <Select
-                        value={record.memberFullName || undefined}
-                        // onChange={val => handleChange(val, record.mediateProjectMemberId, 'memberName')}
+                        value={record.memberId || undefined}
+                        onChange={val => handleFieldChange(record.key, 'memberId', val)}
                         placeholder="Choose member name"
                         style={{ width: '100%' }}
                         allowClear
                       >
-                        <Option value="Super Admin">Super Admin</Option>
-                        <Option value="PhanVanHung">Phan Van Hung</Option>
-                        {/* Thêm các member khác từ API */}
+                        {members.map(member => (
+                          <Select.Option key={member.memberId} value={member.memberId}>
+                            {member.memberFullName}
+                          </Select.Option>
+                        ))}
                       </Select>
                     ),
                   },
@@ -306,14 +395,16 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                     align: 'center',
                     render: (_, record) => (
                       <Select
-                        value={record.roleName || undefined}
-                        // onChange={val => handleChange(val, record.key, 'projectRole')}
+                        value={record.roleId || undefined}
+                        onChange={val => handleFieldChange(record.key, 'roleId', val)}
                         placeholder="Choose project role"
                         style={{ width: '100%' }}
                       >
-                        <Option value="Project Manager">Project Manager</Option>
-                        <Option value="Chief Accountant">Chief Accountant</Option>
-                        {/* Thêm role khác */}
+                        {roles.map(role => (
+                          <Option key={role.roleId} value={role.roleId}>
+                            {role.roleName}
+                          </Option>
+                        ))}
                       </Select>
                     ),
                   },
@@ -325,7 +416,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                     render: (_, record) => (
                       <DatePicker
                         value={record.startDate ? dayjs(record.startDate) : null}
-                        // onChange={(date, dateString) => handleDateChange(date, dateString as string, record.key, 'startDate')}
+                        onChange={(date) => handleFieldChange(record.key, 'startDate', date ? date.format('YYYY-MM-DD') : null)}
                         format="YYYY-MM-DD"
                         style={{ width: '100%' }}
                       />
@@ -339,7 +430,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                     render: (_, record) => (
                       <DatePicker
                         value={record.endDate ? dayjs(record.endDate) : null}
-                        // onChange={(date, dateString) => handleDateChange(date, dateString as string, record.key, 'endDate')}
+                        onChange={(date) => handleFieldChange(record.key, 'endDate', date ? date.format('YYYY-MM-DD') : null)}
                         format="YYYY-MM-DD"
                         style={{ width: '100%' }}
                       />
@@ -350,15 +441,14 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                     dataIndex: 'isCurrent',
                     width: 140,
                     align: 'center',
-                    render: (isCurrent: boolean) => (
+                    render: (isCurrent: boolean, record) => (
                       <Select
-                        value={isCurrent? "Is A Member": "Not A Member"}
-                        // onChange={val => handleChange(val, record.key, 'isCurrent')}
+                        value={isCurrent ? true : false}
+                        onChange={val => handleFieldChange(record.key, 'isCurrent', val)}
                         style={{ width: '100%' }}
                       >
-                        {isCurrent? "Is A Member": "Not A Member"}
-                        <Option value="1">Is A Member</Option>
-                        <Option value="0">Not A Member</Option>
+                        <Option value={true}>Is A Member</Option>
+                        <Option value={false}>Not A Member</Option>
                       </Select>
                     ),
                   },
@@ -367,10 +457,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                     key: 'delete',
                     width: 60,
                     align: 'center',
-                    render: () => (
+                    render: (_, record) => (
                       <Popconfirm
                         title="Delete this member?"
-                        // onConfirm={() => handleDelete(record.key)}
+                        onConfirm={() => handleDelete(record.key)}
                         okText="Yes"
                         cancelText="No"
                       >
@@ -388,7 +478,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
 
                     <Table
                       columns={columns}
-                      dataSource ={ projectMemberData}
+                      dataSource={editMemberData}
                       pagination={false}
                       bordered
                       size="middle"
@@ -397,7 +487,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
 
                     <Button
                       icon={<PlusOutlined />}
-                      // onClick={handleAdd}
+                      onClick={handleAdd}
                       className=" w-[150px] h-10 ml-auto text-white hover:!text-white mt-2 items-center justify-center bg-green-500 hover:!bg-green-600"
                     >
                       Add Member
@@ -412,6 +502,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ isOpen, onClose, currentP
                       </Button>
 
                       <Button
+                        onClick={handleSave}
+                        loading={savingMember}
                         className="px-8 py-5 !bg-green-500 hover:!bg-green-600 !text-white rounded-xl transition hover:!text-white"
                       >
                         Save

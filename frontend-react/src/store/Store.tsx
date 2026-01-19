@@ -4,6 +4,7 @@ import projectReducer from "../redux/slice/projectSlice"
 import projectStatusReducer from "../redux/slice/projectStatusSlice"
 import memberReducer from "../redux/slice/memberSlice";
 import projectMemberRuducer from "../redux/slice/projectMemberSlice";
+import roleReducer from "../redux/slice/roleSlice"
 
 const reducer = {
   auth: authReducer,
@@ -11,6 +12,7 @@ const reducer = {
   projectStatus: projectStatusReducer,
   member: memberReducer,
   projectMember: projectMemberRuducer,
+  role: roleReducer,
 };
 
 const Store =

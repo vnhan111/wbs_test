@@ -25,6 +25,11 @@ const projectMemberSlice = createSlice({
             state.isLoading = false;
             state.error = null;
         },
+        addMember: (state, action: PayloadAction<ProjectMemberResponse>) => {
+            state.projectMembers.push(action.payload);
+            state.isLoading = false;
+            state.error = null;
+        },
         setError: (state, action: PayloadAction<string>) => {
             state.error = action.payload;
             state.isLoading = false;
@@ -35,5 +40,5 @@ const projectMemberSlice = createSlice({
     },
 });
 
-export const { setLoading, setProjectMembers, setError, clearError } = projectMemberSlice.actions;
+export const { setLoading, setProjectMembers, addMember, setError, clearError } = projectMemberSlice.actions;
 export default projectMemberSlice.reducer;

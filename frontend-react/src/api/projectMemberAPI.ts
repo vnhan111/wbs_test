@@ -12,12 +12,12 @@ export interface ProjectMemberResponse {
     isCurrent: boolean;
 }
 
-export interface CreateMemberRequest {
+export interface AddMemberRequest {
     memberId: number;
     roleId: number;
-    startDate: string;
-    endDate: string;
-    isCurrent: boolean;
+    startDate?: string;
+    endDate?: string;
+    isCurrent?: boolean;
 }
 
 export const getAllMembersByProjectIdAPI = async (projectId: number) => {
@@ -32,6 +32,22 @@ export const getAllMembersByProjectIdAPI = async (projectId: number) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching project members:', error);
+        throw error;
+    }
+}
+
+export const AddMemberAPI = async (projectId: number, body: AddMemberRequest) => {
+    try {
+        const token = localStorage.getItem("token");
+        const url = `${API_BASE_URL}/projectmember/${projectId}`;
+        const response = await axios.post<ProjectMemberResponse>(url, body, {
+            headers: {
+                Authorization : `Bearer ${token}`, 
+            },
+        });
+        return response.data;
+    } catch(error) {
+        console.error("Error adding member", error);
         throw error;
     }
 }
