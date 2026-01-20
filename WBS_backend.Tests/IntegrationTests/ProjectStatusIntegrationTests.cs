@@ -31,9 +31,9 @@ namespace WBS_backend.Tests.Integration
                         services.Remove(descriptor);
                     }
 
-                    // Thay bằng InMemory database cho test
+                    // Thay bằng InMemory database cho test (tên riêng cho class này để tránh đụng nhau)
                     services.AddDbContext<AppDbContext>(options =>
-                        options.UseInMemoryDatabase("ProjectIntegrationTestDb"));
+                        options.UseInMemoryDatabase("ProjectIntegrationTestDb_ProjectStatus"));
 
                     // Build provider để seed dữ liệu
                     var sp = services.BuildServiceProvider();
