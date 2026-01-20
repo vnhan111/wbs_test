@@ -53,5 +53,26 @@ namespace WBS_backend.Tests.Controllers
             var returnedMembers = Assert.IsAssignableFrom<List<MemberListResponse>>(okResult.Value);
             returnedMembers.Should().BeEmpty();
         }
+
+        [Fact]
+        public async Task GetMember_ReturnNotFound_WhenServiceReturnsNull()
+        {
+            _mockMemberService.Setup(s => s.GetAllMemberAsync()).ReturnsAsync((List<MemberListResponse>?)null);
+
+            var result = await _controller.GetAllMember();
+
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task GetMember_Return500_WhenExceptionIsThrown()
+        {
+            _mockMemberService.Setup(s => s.GetAllMemberAsync()).ThrowsAsync(new Exception("error"));
+
+            var result = await _controller.GetAllMember();
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            objectResult.StatusCode.Should().Be(500);
+        }
     }
 }
