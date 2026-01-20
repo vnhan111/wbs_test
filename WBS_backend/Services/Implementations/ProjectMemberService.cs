@@ -79,6 +79,7 @@ namespace WBS_backend.Services
             
             return new ProjectMemberResponse
             {
+                MediateProjectMemberId = project_member.MediateProjectMemberId,
                 MemberId = project_member.MemberId,
                 MemberFullName = project_member.Member.MemberFullName ?? "null",
                 RoleId = project_member.RoleId ?? 0,
