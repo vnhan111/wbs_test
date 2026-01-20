@@ -11,7 +11,7 @@ namespace WBS_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize]
+    [Authorize]
     public class ProjectMemberController : ControllerBase
     {
         private readonly IProjectMemberService _projectMemberService;
@@ -64,7 +64,12 @@ namespace WBS_backend.Controllers
                     return NotFound(new {message = $"Không thể thêm member vòa project!"});
                 }
                 return Ok(result);
-            }catch(Exception ex)
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch(Exception ex)
             {
                 return StatusCode(500, new {message = "Lỗi hệ thống: " + ex.Message});
             }

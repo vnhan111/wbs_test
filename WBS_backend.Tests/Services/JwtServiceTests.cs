@@ -86,12 +86,17 @@ namespace WBS_backend.Tests.Services
         [Fact]
         public void ValidateToken_Should_Return_Null_For_Invalid_Or_Empty_Token()
         {
+            // Đảm bảo không bị throw do thiếu JWT_SECRET
+            Environment.SetEnvironmentVariable("JWT_SECRET", "super_secret_key_super_secret_key");
+
             var config = CreateConfiguration();
             var service = new JwtService(config);
 
             service.ValidateToken(null!).Should().BeNull();
             service.ValidateToken(string.Empty).Should().BeNull();
             service.ValidateToken("invalid-token").Should().BeNull();
+
+            Environment.SetEnvironmentVariable("JWT_SECRET", null);
         }
     }
 }
