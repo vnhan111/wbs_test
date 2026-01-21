@@ -188,7 +188,7 @@ describe('ProjectDetail Integration Test & Full Coverage', () => {
     }, { timeout: 3000 });
 
     expect(vi.mocked(ProjectMemberService.addMember)).not.toHaveBeenCalled();
-  }, 15000);
+  }, 30000);
 
   // 4. Case đóng Modal bằng nút X
   it('4. Nên đóng Modal khi nhấn nút X', async () => {

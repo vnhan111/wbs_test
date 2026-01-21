@@ -90,6 +90,7 @@ describe('Register Component Integration Tests', () => {
   it('2. Ẩn/Hiện mật khẩu khi tương tác với biểu tượng mắt', () => {
     const { container } = renderRegister();
     const passInput = screen.getByPlaceholderText('Enter password');
+    const confirmPass = screen.getByPlaceholderText('Enter confirm password');
     
     // Ant Design render icon toggle password là các button type="button"
     const toggles = container.querySelectorAll('button[type="button"]');
@@ -99,6 +100,12 @@ describe('Register Component Integration Tests', () => {
     expect(passInput).toHaveAttribute('type', 'text');
     fireEvent.click(toggles[0]); // Click lại để ẩn
     expect(passInput).toHaveAttribute('type', 'password');
+
+    expect(confirmPass).toHaveAttribute('type', 'password');
+    fireEvent.click(toggles[1]); // Click toggle pass
+    expect(confirmPass).toHaveAttribute('type', 'text');
+    fireEvent.click(toggles[1]); // Click lại để ẩn
+    expect(confirmPass).toHaveAttribute('type', 'password');
   });
 
   it('3. Thông báo lỗi khi mật khẩu xác nhận không khớp', async () => {
